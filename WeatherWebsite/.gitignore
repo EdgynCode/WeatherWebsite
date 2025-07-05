@@ -1,0 +1,42 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Visual Studio Code
+.vscode/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# DotNet CLI
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Environment files
+.env
+
+# Logs
+*.log
+
+# Docker
+docker-compose*.yml
+Dockerfile*
+
+# Others
+node_modules/
+npm-debug.log
+
+# Rider
+.idea/
+*.sln.iml

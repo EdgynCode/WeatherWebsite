@@ -1,0 +1,112 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    var currentWeather = ViewData["CurrentWeather"] as WeatherData;
+    var forecast = ViewData["Forecast"] as ForecastData;
+    var selectedLocation = ViewData["SelectedLocation"] as string;
+    var selectedTimeZone = ViewData["SelectedTimeZone"] as string;
+
+    string GetIconSrc(string Icon) => $"http://openweathermap.org/img/wn/{Icon}@2x.png";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="text-center">Weather Dashboard</h2>
+            <form method="post" class="text-center">
+                <div class="form-group pb-4">
+                    <label for="location">Select Location:</label>
+                    @Html.DropDownList("selectedLocation", ViewData["Locations"] as SelectList,
+                    new { @class = "form-control", @id = "location" } )
+                </div>
+                <button type="submit" class="btn btn-primary">Get Weather Info</button>
+            </form>
+            <input type="hidden" id="timeZone" value="@selectedTimeZone" />
+            <p class="text-center"><strong>Current Time:</strong> <span id="currentTime"></span></p>
+            <div class="clock">
+                <div class="clock-face">
+                    <div class="hand hour-hand"></div>
+                    <div class="hand minute-hand"></div>
+                    <div class="hand second-hand"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Current Weather in @selectedLocation</div>
+                <div class="card-body">
+                    @if (currentWeather != null)
+                    {
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img src="@GetIconSrc(currentWeather.Weather[0].Icon)"
+                                    alt="@currentWeather.Weather[0].Description" />
+                            </div>
+                            <div class="col-md-8">
+                                <h5 class="card-title">@currentWeather.Main.Temp °C</h5>
+                                <p class="card-text">@currentWeather.Weather[0].Description</p>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <p>No Weather Data</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">3-Day Temperature Forecast</div>
+                <div class="card-body">
+                    <canvas id="temperatureChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var ctx = document.getElementById('temperatureChart').getContext('2d');
+        var temperatures = @Html.Raw(Json.Serialize(forecast.List.Select(day => day.Main.Temp)));
+        var labels = @Html.Raw(Json.Serialize(forecast.List.Select(day => day.DateTimeString)));
+
+        // Define your threshold for high/low temperature
+        var threshold = 20; // Example: 20°C
+
+        // Generate color arrays based on temperature
+        var backgroundColors = temperatures.map(function (temp) {
+            return temp >= threshold ? 'rgba(255, 99, 132, 0.5)' : 'rgba(54, 162, 235, 0.5)';
+        });
+        var borderColors = temperatures.map(function (temp) {
+            return temp >= threshold ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
+        });
+
+        var temperatureChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Temperature (°C)',
+                    data: temperatures,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+}

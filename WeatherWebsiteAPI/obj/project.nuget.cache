@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "MHs9BXoFLF8=",
+  "success": true,
+  "projectFilePath": "D:\\Desktop\\CodeProjects\\Self-develop\\WeatherWebsiteAPI\\WeatherWebsiteAPI.csproj",
+  "expectedPackageFiles": [
+    "D:\\NuGet\\microsoft.aspnetcore.openapi\\9.0.5\\microsoft.aspnetcore.openapi.9.0.5.nupkg.sha512",
+    "D:\\NuGet\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512",
+    "D:\\NuGet\\microsoft.visualstudio.azure.containers.tools.targets\\1.21.0\\microsoft.visualstudio.azure.containers.tools.targets.1.21.0.nupkg.sha512"
+  ],
+  "logs": []
+}

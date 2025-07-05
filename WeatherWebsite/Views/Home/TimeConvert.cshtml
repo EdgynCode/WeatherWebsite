@@ -1,0 +1,93 @@
+﻿@{
+    ViewData["Title"] = "Time Conversion";
+}
+
+<div class="text-center">
+    <h2>Time Zone Conversion</h2>
+    <form id="timeConvertForm" class="form-group">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="datetime">Date and Time</label>
+                <input type="datetime-local" id="datetime" class="form-control" required>
+            </div>
+
+            <div class="col-md-4">
+                <label for="fromTimeZone">From Time Zone</label>
+                <select id="fromTimeZone" class="form-control" required>
+                    <!-- Time zones will be populated here -->
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label for="toTimeZone">To Time Zone</label>
+                <select id="toTimeZone" class="form-control" required>
+                    <!-- Time zones will be populated here -->
+                </select>
+            </div>
+        </div>
+
+        <button type="button" id="convertButton" class="btn btn-primary mt-3">Convert</button>
+    </form>
+    <div id="result" class="mt-4">
+        <h2>Converted Time:</h2>
+        <p id="convertedTime"></p>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let commonTimeZones = [
+                'Europe/Paris', // CET, CEST
+                'Europe/Berlin', // CET, CEST
+                'Asia/Bangkok', // ICT
+                'Asia/Kolkata', // IST
+                'America/New_York', // EST, EDT
+                'America/Chicago', // CST, CDT
+                'America/Denver', // MST, MDT
+                'America/Los_Angeles', // PST, PDT
+                'UTC' // Coordinated Universal Time
+            ];
+            // Populate time zone dropdowns
+            let timeZones = moment.tz.names();
+            let fromTimeZoneSelect = document.getElementById('fromTimeZone');
+            let toTimeZoneSelect = document.getElementById('toTimeZone');
+
+            function addTimeZoneOption(select, value, text) {
+                var option = document.createElement('option');
+                option.value = value;
+                option.text = text;
+                select.add(option);
+            }
+
+            commonTimeZones.forEach(function (tz) {
+                addTimeZoneOption(fromTimeZoneSelect, tz, `${tz} (${moment.tz(tz).format('z')})`);
+                addTimeZoneOption(toTimeZoneSelect, tz, `${tz} (${moment.tz(tz).format('z')})`);
+            });
+
+            addTimeZoneOption(fromTimeZoneSelect, '', '──────────');
+            addTimeZoneOption(toTimeZoneSelect, '', '──────────');
+
+            timeZones.forEach(function (tz) {
+                addTimeZoneOption(fromTimeZoneSelect, tz, tz);
+                addTimeZoneOption(toTimeZoneSelect, tz, tz);
+            });
+
+            document.getElementById('convertButton').addEventListener('click', function () {
+                let datetime = document.getElementById('datetime').value;
+                let fromTimeZone = document.getElementById('fromTimeZone').value;
+                let toTimeZone = document.getElementById('toTimeZone').value;
+
+                if (datetime && fromTimeZone && toTimeZone) {
+                    // Convert time
+                    let convertedTime = moment.tz(datetime, fromTimeZone).tz(toTimeZone).format('YYYY-MM-DD HH:mm:ss');
+                    document.getElementById('convertedTime').textContent = convertedTime;
+                } else {
+                    document.getElementById('convertedTime').textContent = "Please fill out all fields.";
+                }
+            });
+        });
+    </script>
+}
