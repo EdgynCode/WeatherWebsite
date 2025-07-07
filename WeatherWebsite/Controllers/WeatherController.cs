@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 using WeatherWebsite.Models;
@@ -6,11 +6,10 @@ using WeatherWebsite.Services;
 
 namespace WeatherWebsite.Controllers
 {
-    public class HomeController(ILogger<HomeController> logger, WeatherApiClient weatherApiClient) : Controller
+    public class WeatherController(ILogger<WeatherController> logger, WeatherApiClient weatherApiClient) : Controller
     {
-        private readonly ILogger<HomeController> _logger = logger;
+        private readonly ILogger<WeatherController> _logger = logger;
         private readonly WeatherApiClient _weatherApiClient = weatherApiClient;
-
         private static List<Location> GetLocations()
         {
             return
@@ -68,27 +67,6 @@ namespace WeatherWebsite.Controllers
             ViewData["SelectedLocation"] = selectedLocation;
 
             return View();
-        }
-
-        public IActionResult WorldTime()
-        {
-            return View();
-        }
-
-        public IActionResult TimeConvert()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace WeatherWebsite.Models
+namespace WeatherWebsiteAPI.Models
 {
     public class Sys
     {

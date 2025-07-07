@@ -77,15 +77,25 @@
         var temperatures = @Html.Raw(Json.Serialize(forecast.List.Select(day => day.Main.Temp)));
         var labels = @Html.Raw(Json.Serialize(forecast.List.Select(day => day.DateTimeString)));
 
-        // Define your threshold for high/low temperature
-        var threshold = 20; // Example: 20°C
-
-        // Generate color arrays based on temperature
-        var backgroundColors = temperatures.map(function (temp) {
-            return temp >= threshold ? 'rgba(255, 99, 132, 0.5)' : 'rgba(54, 162, 235, 0.5)';
+        // Generate color arrays based on temperature ranges
+        var backgroundColors = temperatures.map((temp) => {
+            if (temp < 0) return 'rgba(0, 0, 255, 0.5)'; // Below 0°C
+            else if (temp >= 0 && temp < 10) return 'rgba(173, 216, 230, 0.5)'; // 0 to 10°C
+            else if (temp >= 10 && temp < 20) return 'rgba(255, 255, 0, 0.5)'; // 10 to 20°C
+            else if (temp >= 20 && temp < 30) return 'rgba(255, 165, 0, 0.5)'; // 20 to 30°C
+            else if (temp >= 30 && temp < 35) return 'rgba(255, 69, 0, 0.5)'; // 30 to 35°C
+            else if (temp >= 35 && temp < 40) return 'rgba(255, 0, 0, 0.5)'; // 35 to 39°C
+            else return 'rgba(128, 0, 128, 0.5)'; // Over 40°C
         });
-        var borderColors = temperatures.map(function (temp) {
-            return temp >= threshold ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
+
+        var borderColors = temperatures.map((temp) => {
+            if (temp < 0) return 'rgba(0, 0, 255, 1)';
+            else if (temp >= 0 && temp < 10) return 'rgba(173, 216, 230, 1)';
+            else if (temp >= 10 && temp < 20) return 'rgba(255, 255, 0, 1)';
+            else if (temp >= 20 && temp < 30) return 'rgba(255, 165, 0, 1)';
+            else if (temp >= 30 && temp < 35) return 'rgba(255, 69, 0, 1)';
+            else if (temp >= 35 && temp < 40) return 'rgba(255, 0, 0, 1)';
+            else return 'rgba(128, 0, 128, 1)';
         });
 
         var temperatureChart = new Chart(ctx, {

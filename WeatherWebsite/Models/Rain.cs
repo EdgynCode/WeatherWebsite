@@ -4,7 +4,7 @@ namespace WeatherWebsite.Models
 {
     public class Rain
     {
-        [JsonProperty("3h")]
+        [JsonProperty("threeH")]
         public float? ThreeH { get; set; }
     }
 }

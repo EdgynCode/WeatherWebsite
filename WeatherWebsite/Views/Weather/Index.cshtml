@@ -1,0 +1,106 @@
+@{
+    ViewData["Title"] = "Weather Forecast";
+    var currentWeather = ViewData["CurrentWeather"] as WeatherData;
+    var forecast = ViewData["Forecast"] as ForecastData;
+    var selectedLocation = ViewData["SelectedLocation"] as string;
+    var selectedTimeZone = ViewData["SelectedTimeZone"] as string;
+
+    string GetIconSrc(string Icon) => $"http://openweathermap.org/img/wn/{Icon}@2x.png";
+    string ChangeTheme(string DateTimeString)
+    {
+        DateTime currentTime = DateTime.Parse(DateTimeString);
+        int hour = currentTime.Hour;
+
+        if (hour >= 6 && hour < 18)
+        {
+            return "card bg-primary mb-3";
+        }
+        else
+        {
+            return "card bg-dark mb-3";
+        }
+    }
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="text-center">Weather Dashboard</h2>
+            <form method="post" class="text-center">
+                <div class="form-group pb-4">
+                    <label for="location">Select Location:</label>
+                    @Html.DropDownList("selectedLocation", ViewData["Locations"] as SelectList,
+                    new { @class = "form-control", @id = "location" } )
+                </div>
+                <button type="submit" class="btn btn-primary">Get Weather Info</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Current Weather in @selectedLocation</div>
+                <div class="card-body">
+                    @if (currentWeather != null)
+                    {
+                        <div class="row">
+                            <div class="col-md-4">
+                                <img src="@GetIconSrc(currentWeather.Weather[0].Icon)"
+                                    alt="@currentWeather.Weather[0].Description" />
+                            </div>
+                            <div class="col-md-8">
+                                <h5 class="card-title">@currentWeather.Main.Temp °C</h5>
+                                <p class="card-text">@currentWeather.Weather[0].Description</p>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <p>No Weather Data</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">3-Day Weather Forecast</div>
+                <div class="card-body">
+                    @if (forecast != null)
+                    {
+                        <div class="row">
+                            @foreach (var day in forecast.List)
+                            {
+                                <div class="col-md-4">
+                                    <div class="@ChangeTheme(day.DateTimeString)">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-white">@day.DateTimeString</h5>
+                                            <p class="card-text text-white">
+                                                <img src="@GetIconSrc(day.Weather[0].Icon)"
+                                                    alt="@day.Weather[0].Description" /><br />
+                                                <strong>Temperature:</strong> @day.Main.Temp °C<br />
+                                                <strong>Min Temp:</strong> @day.Main.TempMin °C<br />
+                                                <strong>Max Temp:</strong> @day.Main.TempMax °C<br />
+                                                <strong>Condition:</strong> @day.Weather[0].Description<br />
+                                                <strong>Humidity:</strong> @day.Main.Humidity %<br />
+                                                <strong>Wind:</strong> @day.Wind.Speed m/s
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <p>No Weather Data</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

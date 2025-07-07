@@ -4,7 +4,7 @@ namespace WeatherWebsite.Models
 {
     public class WeatherData
     {
-        [JsonProperty("dt")]
+        [JsonProperty("dateTime")]
         public long DateTime { get; set; }
         [JsonProperty("main")]
         public Main? Main { get; set; }
@@ -22,7 +22,7 @@ namespace WeatherWebsite.Models
         public Rain? Rain { get; set; }
         [JsonProperty("sys")]
         public Sys? Sys { get; set; }
-        [JsonProperty("dt_txt")]
+        [JsonProperty("dateTimeString")]
         public string? DateTimeString { get; set; }
     }
 }
