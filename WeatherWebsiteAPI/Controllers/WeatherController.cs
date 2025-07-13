@@ -42,5 +42,19 @@ namespace WeatherWebsiteAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("air_pollution")]
+        public async Task<ActionResult<AQIData>> GetAQIData([FromQuery] double lat, [FromQuery] double lng)
+        {
+            try
+            {
+                var data = await _weatherService.GetAQIData(lat, lng);
+                return Ok(data);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

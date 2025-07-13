@@ -2,6 +2,7 @@
     ViewData["Title"] = "Home Page";
     var currentWeather = ViewData["CurrentWeather"] as WeatherData;
     var forecast = ViewData["Forecast"] as ForecastData;
+    var aqiData = ViewData["AQIData"] as AQIData;
     var selectedLocation = ViewData["SelectedLocation"] as string;
     var selectedTimeZone = ViewData["SelectedTimeZone"] as string;
 
@@ -37,25 +38,56 @@
             <div class="card text-white bg-primary mb-3">
                 <div class="card-header">Current Weather in @selectedLocation</div>
                 <div class="card-body">
-                    @if (currentWeather != null)
-                    {
-                        <div class="row">
-                            <div class="col-md-4">
-                                <img src="@GetIconSrc(currentWeather.Weather[0].Icon)"
-                                    alt="@currentWeather.Weather[0].Description" />
-                            </div>
-                            <div class="col-md-8">
-                                <h5 class="card-title">@currentWeather.Main.Temp °C</h5>
-                                <p class="card-text">@currentWeather.Weather[0].Description</p>
-                            </div>
-                        </div>
-                    }
-                    else
+                    @if (currentWeather == null)
                     {
                         <div class="row">
                             <p>No Weather Data</p>
                         </div>
                     }
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="@GetIconSrc(currentWeather.Weather[0].Icon)"
+                                alt="@currentWeather.Weather[0].Description" />
+                        </div>
+                        <div class="col-md-8">
+                            <h5 class="card-title">@currentWeather.Main.Temp °C</h5>
+                            <p class="card-text">@currentWeather.Weather[0].Description</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Current Air Quality in @selectedLocation</div>
+                <div class="card-body">
+                    @if (aqiData == null)
+                    {
+                        <div class="row">
+                            <p>No AQI Data</p>
+                        </div>
+                    }
+                    else
+                    {
+                        var air = aqiData.List[0];
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h6 class="mt-2">AQI: @air.Main.AQI</h6>
+                            </div>
+                            <div class="col-md-8">
+                                <ul class="list-unstyled mt-2">
+                                    <li><strong>CO:</strong> @air.Components.CO μg/m³</li>
+                                    <li><strong>NO:</strong> @air.Components.NO μg/m³</li>
+                                    <li><strong>NO₂:</strong> @air.Components.NO2 μg/m³</li>
+                                    <li><strong>O₃:</strong> @air.Components.O3 μg/m³</li>
+                                    <li><strong>SO₂:</strong> @air.Components.SO2 μg/m³</li>
+                                    <li><strong>PM2.5:</strong> @air.Components.PM2_5 μg/m³</li>
+                                    <li><strong>PM10:</strong> @air.Components.PM10 μg/m³</li>
+                                    <li><strong>NH₃:</strong> @air.Components.NH3 μg/m³</li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+
                 </div>
             </div>
         </div>

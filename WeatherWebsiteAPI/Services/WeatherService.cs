@@ -10,7 +10,7 @@ namespace WeatherWebsiteAPI.Services
     public class WeatherService
     {
         private static readonly HttpClient client = new HttpClient();
-        private readonly string apiKey;
+        private readonly string? apiKey;
         private readonly string apiUrl = "http://api.openweathermap.org/data/2.5/";
 
         public WeatherService()
@@ -48,6 +48,22 @@ namespace WeatherWebsiteAPI.Services
             else
             {
                 throw new Exception("Error fetching weather forecast data.");
+            }
+        }
+
+        public async Task<AQIData> GetAQIData(double lat, double lon)
+        {
+            string url = $"{apiUrl}air_pollution?lat={lat}&lon={lon}&appid={apiKey}";
+            HttpResponseMessage response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+                var aqiData = JsonConvert.DeserializeObject<AQIData>(jsonString);
+                return aqiData ?? new AQIData();
+            }
+            else
+            {
+                throw new Exception("Error fetching weather air pollution data.");
             }
         }
     }

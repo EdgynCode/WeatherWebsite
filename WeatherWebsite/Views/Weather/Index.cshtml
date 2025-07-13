@@ -3,7 +3,6 @@
     var currentWeather = ViewData["CurrentWeather"] as WeatherData;
     var forecast = ViewData["Forecast"] as ForecastData;
     var selectedLocation = ViewData["SelectedLocation"] as string;
-    var selectedTimeZone = ViewData["SelectedTimeZone"] as string;
 
     string GetIconSrc(string Icon) => $"http://openweathermap.org/img/wn/{Icon}@2x.png";
     string ChangeTheme(string DateTimeString)
@@ -81,8 +80,6 @@
                                                 <img src="@GetIconSrc(day.Weather[0].Icon)"
                                                     alt="@day.Weather[0].Description" /><br />
                                                 <strong>Temperature:</strong> @day.Main.Temp °C<br />
-                                                <strong>Min Temp:</strong> @day.Main.TempMin °C<br />
-                                                <strong>Max Temp:</strong> @day.Main.TempMax °C<br />
                                                 <strong>Condition:</strong> @day.Weather[0].Description<br />
                                                 <strong>Humidity:</strong> @day.Main.Humidity %<br />
                                                 <strong>Wind:</strong> @day.Wind.Speed m/s

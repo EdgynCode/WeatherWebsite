@@ -25,5 +25,13 @@ namespace WeatherWebsite.Services
             var json = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<ForecastData>(json) ?? new ForecastData();
         }
+
+        public async Task<AQIData> GetAQIData(double lat, double lon)
+        {
+            var response = await httpClient.GetAsync($"{_apiBaseUrl}/air_pollution?lat={lat}&lon={lon}");
+            response.EnsureSuccessStatusCode();
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<AQIData>(json) ?? new AQIData();
+        }
     }
 }
