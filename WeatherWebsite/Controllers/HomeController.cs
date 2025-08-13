@@ -28,6 +28,9 @@ namespace WeatherWebsite.Controllers
                 new Location { ID = "DOH", Name = "Doha, Qatar", TimeZone = "Asia/Qatar", Lat = 25.276987, Lng = 51.520008 },
                 new Location { ID = "CAI", Name = "Cairo, Egypt", TimeZone = "Africa/Cairo", Lat = 30.0444, Lng = 31.2357 },
                 new Location { ID = "JNB", Name = "Johannesburg, South Africa", TimeZone = "Africa/Johannesburg", Lat = -26.2041, Lng = 28.0473 },
+                new Location { ID = "DEL", Name = "New Delhi, India", TimeZone = "Asia/Kolkata", Lat = 28.6139, Lng = 77.2090 },
+                new Location { ID = "SGN", Name = "Ho Chi Minh City, Vietnam", TimeZone = "Asia/Ho_Chi_Minh", Lat = 10.8231, Lng = 106.6297 },
+                new Location { ID = "HAN", Name = "Hanoi, Vietnam", TimeZone = "Asia/Ho_Chi_Minh", Lat = 21.0285, Lng = 105.8542 },
             ];
         }
         [HttpGet]
@@ -66,12 +69,17 @@ namespace WeatherWebsite.Controllers
             ViewData["SelectedTimeZone"] = selectedTimeZone;
 
             // Get weather data for the selected location
+            double lat = locations.First(l => l.Name == selectedLocation).Lat;
+            double lng = locations.First(l => l.Name == selectedLocation).Lng;
+
             var getCurrentWeather = await _weatherApiClient.GetCurrentWeather(selectedLocation);
             var getWeatherForecast = await _weatherApiClient.GetWeatherForecast(selectedLocation);
+            var getAirPollutionData = await _weatherApiClient.GetAQIData(lat, lng);
 
             ViewData["CurrentWeather"] = getCurrentWeather;
             ViewData["Forecast"] = getWeatherForecast;
             ViewData["SelectedLocation"] = selectedLocation;
+            ViewData["AQIData"] = getAirPollutionData;
 
             return View();
         }

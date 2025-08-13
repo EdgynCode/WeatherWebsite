@@ -5,8 +5,24 @@
     var aqiData = ViewData["AQIData"] as AQIData;
     var selectedLocation = ViewData["SelectedLocation"] as string;
     var selectedTimeZone = ViewData["SelectedTimeZone"] as string;
+    var air = aqiData?.List?.FirstOrDefault();
+    var aqiLevel = air?.Main?.AQI ?? 0;
+    var aqiColorClass = getAQIColor(aqiLevel);
 
     string GetIconSrc(string Icon) => $"http://openweathermap.org/img/wn/{Icon}@2x.png";
+
+    string getAQIColor(int aqi)
+    {
+        return aqi switch
+        {
+            1 => "bg-green",
+            2 => "bg-yellow",
+            3 => "bg-orange",
+            4 => "bg-red",
+            5 => "bg-purple",
+            _ => "bg-primary"
+        };
+    }
 }
 
 <div class="container">
@@ -56,8 +72,7 @@
                     </div>
                 </div>
             </div>
-
-            <div class="card text-white bg-primary mb-3">
+            <div class="card text-white @aqiColorClass mb-3">
                 <div class="card-header">Current Air Quality in @selectedLocation</div>
                 <div class="card-body">
                     @if (aqiData == null)
@@ -68,7 +83,6 @@
                     }
                     else
                     {
-                        var air = aqiData.List[0];
                         <div class="row">
                             <div class="col-md-4">
                                 <h6 class="mt-2">AQI: @air.Main.AQI</h6>
