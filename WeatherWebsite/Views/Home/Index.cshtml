@@ -15,20 +15,33 @@
     {
         return aqi switch
         {
-            1 => "bg-green",
-            2 => "bg-yellow",
-            3 => "bg-orange",
-            4 => "bg-red",
-            5 => "bg-purple",
-            _ => "bg-primary"
+            1 => "text-white bg-green",
+            2 => "text-black bg-yellow",
+            3 => "text-white bg-orange",
+            4 => "text-white bg-red",
+            5 => "text-white bg-purple",
+            _ => "text-white bg-primary"
+        };
+    }
+
+    string getAQIStatus(int aqi)
+    {
+        return aqi switch
+        {
+            1 => "Good",
+            2 => "Fair",
+            3 => "Moderate",
+            4 => "Poor",
+            5 => "Very Poor",
+            _ => "Unknown"
         };
     }
 }
 
 <div class="container">
     <div class="row">
-        <div class="col-md-12">
-            <h2 class="text-center">Weather Dashboard</h2>
+        <div class="col-md-9">
+            <h2>Weather Dashboard</h2>
             <form method="post" class="text-center">
                 <div class="form-group pb-4">
                     <label for="location">Select Location:</label>
@@ -37,6 +50,8 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Get Weather Info</button>
             </form>
+        </div>
+        <div class="col-md-3">
             <input type="hidden" id="timeZone" value="@selectedTimeZone" />
             <p class="text-center"><strong>Current Time:</strong> <span id="currentTime"></span></p>
             <div class="clock">
@@ -66,13 +81,13 @@
                                 alt="@currentWeather.Weather[0].Description" />
                         </div>
                         <div class="col-md-8">
-                            <h5 class="card-title">@currentWeather.Main.Temp °C</h5>
+                            <h3 class="card-title">@currentWeather.Main.Temp °C</h3>
                             <p class="card-text">@currentWeather.Weather[0].Description</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="card text-white @aqiColorClass mb-3">
+            <div class="card @aqiColorClass mb-3">
                 <div class="card-header">Current Air Quality in @selectedLocation</div>
                 <div class="card-body">
                     @if (aqiData == null)
@@ -84,15 +99,19 @@
                     else
                     {
                         <div class="row">
-                            <div class="col-md-4">
-                                <h6 class="mt-2">AQI: @air.Main.AQI</h6>
-                            </div>
-                            <div class="col-md-8">
+                            <h4 class="mt-2">Status: @getAQIStatus(air.Main.AQI)</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
                                 <ul class="list-unstyled mt-2">
                                     <li><strong>CO:</strong> @air.Components.CO μg/m³</li>
                                     <li><strong>NO:</strong> @air.Components.NO μg/m³</li>
                                     <li><strong>NO₂:</strong> @air.Components.NO2 μg/m³</li>
                                     <li><strong>O₃:</strong> @air.Components.O3 μg/m³</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled mt-2">
                                     <li><strong>SO₂:</strong> @air.Components.SO2 μg/m³</li>
                                     <li><strong>PM2.5:</strong> @air.Components.PM2_5 μg/m³</li>
                                     <li><strong>PM10:</strong> @air.Components.PM10 μg/m³</li>
@@ -100,6 +119,7 @@
                                 </ul>
                             </div>
                         </div>
+
                     }
 
                 </div>
@@ -107,7 +127,7 @@
         </div>
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">3-Day Temperature Forecast</div>
+                <div class="card-header">5-Day Weather Chart</div>
                 <div class="card-body">
                     <canvas id="temperatureChart"></canvas>
                 </div>
@@ -121,6 +141,7 @@
     <script>
         var ctx = document.getElementById('temperatureChart').getContext('2d');
         var temperatures = @Html.Raw(Json.Serialize(forecast.List.Select(day => day.Main.Temp)));
+        var humidityLevels = @Html.Raw(Json.Serialize(forecast.List.Select(day => day.Main.Humidity)));
         var labels = @Html.Raw(Json.Serialize(forecast.List.Select(day => day.DateTimeString)));
 
         // Generate color arrays based on temperature ranges
@@ -153,13 +174,36 @@
                     data: temperatures,
                     backgroundColor: backgroundColors,
                     borderColor: borderColors,
-                    borderWidth: 1
+                    borderWidth: 1,
+                    yAxisID: 'temperature-axis'
+                },
+                {
+                    label: 'Humidity (%)',
+                    data: humidityLevels,
+                    type: 'line',
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                    fill: false,
+                    borderWidth: 2,
+                    yAxisID: 'humidity-axis'
                 }]
             },
             options: {
                 scales: {
-                    y: {
+                    'temperature-axis': {
                         beginAtZero: true
+                    },
+                    'humidity-axis': {
+                        type: 'linear',
+                        position: 'right',
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Humidity (%)'
+                        },
+                        grid: {
+                            display: false
+                        }
                     }
                 }
             }
