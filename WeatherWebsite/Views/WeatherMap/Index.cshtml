@@ -1,0 +1,78 @@
+@{
+    ViewData["Title"] = "Weather Map";
+}
+
+<div>
+    <div id="map"></div>
+    <div class="chat-bubble" id="chatBubble" style="display: none;">
+        <h4>Location: <span id="bubbleLocation">Unknown</span></h4>
+        <h4>Weather Layer: <span id="bubbleLayer">Temperature</span></h4>
+    </div>
+</div>
+
+@section scripts {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <script>
+        // Initialize map
+        let map = L.map('map').setView([60.1553, -1.1456], 5);
+        let marker = null;
+
+        // Base map (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Weather overlay (temperature)
+        let weatherLayer = L.tileLayer(
+            'https://localhost:7022/api/weathermap/tile/temp_new/{z}/{x}/{y}', {
+            attribution: '&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>',
+            opacity: 0.5
+        }).addTo(map);
+
+        // Layers selector
+        const availableLayers = {
+            "Temperature": `temp_new`,
+            "Clouds": `clouds_new`,
+            "Precipitation": `precipitation_new`,
+            "Pressure": `pressure_new`,
+            "Wind": `wind_new`
+        };
+
+        // Function to change weather overlay
+        function setWeatherLayer(layerName) {
+            map.removeLayer(weatherLayer);
+            weatherLayer = L.tileLayer(
+                `https://localhost:7022/api/weathermap/tile/${availableLayers[layerName]}/{z}/{x}/{y}`, {
+                attribution: '&copy; <a href="https://openweathermap.org/">OpenWeatherMap</a>',
+                opacity: 0.5
+            }
+            );
+            weatherLayer.addTo(map);
+            document.getElementById('bubbleLayer').textContent = layerName;
+        }
+
+        // Click event to show location info
+        map.on('click', function (e) {
+            let lat = e.latlng.lat;
+            let lng = e.latlng.lng;
+
+            // Reverse geocoding for location
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10`)
+                .then(response => response.json())
+                .then(data => {
+                    let city = data.address.city || data.address.town ||
+                        data.address.village || data.address.county ||
+                        data.address.state || 'Unknown';
+                    let country = data.address.country || 'Unknown';
+
+                    document.getElementById('bubbleLocation').textContent = `${city}, ${country}`;
+                    document.getElementById('chatBubble').style.display = 'block';
+                })
+                .catch(err => {
+                    console.error('Error fetching location:', err);
+                });
+        });
+    </script>
+}

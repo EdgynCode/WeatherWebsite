@@ -66,5 +66,19 @@ namespace WeatherWebsiteAPI.Services
                 throw new Exception("Error fetching weather air pollution data.");
             }
         }
+
+        public async Task<byte[]> GetWeatherTileAsync(string layer, int z, int x, int y)
+        {
+            string url = $"https://tile.openweathermap.org/map/{layer}/{z}/{x}/{y}.png?appid={apiKey}";
+            HttpResponseMessage response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsByteArrayAsync();
+            }
+            else
+            {
+                throw new Exception("Error fetching weather tile data.");
+            }
+        }
     }
 }

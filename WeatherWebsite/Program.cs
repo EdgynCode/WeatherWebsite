@@ -28,4 +28,8 @@ app.MapControllerRoute(
     name: "weather",
     pattern: "{controller=Weather}/{action=Index}/{id?}");
 
+app.MapControllerRoute(
+    name: "weather",
+    pattern: "{controller=WeatherMap}/{action=Index}/{id?}");
+
 app.Run();
